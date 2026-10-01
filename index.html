@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Plan de comidas 2.200 kcal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F3F6F7; --surface:#FFFFFF; --ink:#16242E; --muted:#56656F; --line:#D5DEE2;
+  --teal:#0E6A6B; --teal-soft:#DDEEEC; --mustard:#E0AE2E; --mustard-soft:#FBF1D4;
+  --p:#0E6A6B; --g:#C9862B; --hc:#4B6FA8;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#10181D; --surface:#18232A; --ink:#E7EEF1; --muted:#9AAAB3; --line:#2B3A43;
+    --teal:#4FB8B4; --teal-soft:#1D3436; --mustard:#E9BF52; --mustard-soft:#3A3220;
+    --p:#4FB8B4; --g:#E0A452; --hc:#86A6DB;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#10181D; --surface:#18232A; --ink:#E7EEF1; --muted:#9AAAB3; --line:#2B3A43;
+  --teal:#4FB8B4; --teal-soft:#1D3436; --mustard:#E9BF52; --mustard-soft:#3A3220;
+  --p:#4FB8B4; --g:#E0A452; --hc:#86A6DB;
+}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.55 "Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif}
+h1,h2,h3{font-family:"Bricolage Grotesque","Atkinson Hyperlegible",system-ui,sans-serif;line-height:1.15;margin:0}
+h1{font-size:clamp(2rem,6vw,3.2rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(1.5rem,4vw,2rem);font-weight:800;letter-spacing:-.01em;margin-bottom:.75rem}
+h3{font-size:1.15rem;font-weight:700;margin-bottom:.4rem}
+p{margin:.4rem 0 .8rem}
+a{color:var(--teal)}
+.wrap{max-width:920px;margin:0 auto;padding:0 18px}
+nav{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+nav .wrap{display:flex;gap:6px;overflow-x:auto;padding-top:10px;padding-bottom:10px}
+nav a{flex:none;text-decoration:none;color:var(--ink);font-weight:700;font-size:.95rem;padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--surface)}
+nav a:focus-visible,button:focus-visible,label:focus-within{outline:3px solid var(--mustard);outline-offset:2px}
+header{padding:38px 0 18px}
+header p{color:var(--muted);max-width:60ch}
+.targets{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.targets span{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-weight:700}
+.targets small{display:block;font-weight:400;color:var(--muted);font-size:.8rem}
+section{padding:28px 0;border-top:1px solid var(--line)}
+
+/* Day picker: the memorable piece */
+.days{display:grid;grid-template-columns:repeat(10,1fr);gap:6px;margin:6px 0 16px}
+.days button{font:800 1.15rem "Bricolage Grotesque",sans-serif;padding:12px 0;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.days button[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:var(--surface)}
+@media (max-width:560px){.days{grid-template-columns:repeat(5,1fr)}}
+.plate{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px}
+.plate-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.plate-head .kcal{font:800 2.4rem "Bricolage Grotesque",sans-serif;letter-spacing:-.02em}
+.plate-head .kcal small{font-size:1rem;font-weight:500;color:var(--muted)}
+.meals{list-style:none;margin:0;padding:0}
+.meals li{display:grid;grid-template-columns:110px 1fr;gap:10px;padding:10px 0;border-top:1px dashed var(--line)}
+.meals li:first-child{border-top:0}
+.meals .when{color:var(--muted);font-size:.9rem;padding-top:2px}
+.meals .what{font-weight:700}
+.meals .what small{display:block;font-weight:400;color:var(--muted);font-size:.88rem}
+.bars{margin-top:14px;display:grid;gap:8px}
+.bar{display:grid;grid-template-columns:110px 1fr auto;align-items:center;gap:10px;font-size:.9rem}
+.bar .track{height:10px;background:var(--line);border-radius:6px;overflow:hidden}
+.bar .fill{height:100%;border-radius:6px;transition:width .35s ease}
+.bar .num{text-align:right;font-weight:700;white-space:nowrap}
+@media (max-width:480px){.bar{grid-template-columns:96px 1fr auto;font-size:.85rem}.meals li{grid-template-columns:84px 1fr}}
+@media (prefers-reduced-motion:reduce){.bar .fill{transition:none}}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px}
+.macro{font-size:.88rem;color:var(--muted);margin-bottom:8px}
+.card ul{margin:.3rem 0 0;padding-left:1.15rem}
+.card li{margin:.25rem 0}
+.tip{background:var(--teal-soft);border-radius:10px;padding:10px 12px;margin-top:10px;font-size:.95rem}
+
+.table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:.93rem}
+th,td{padding:10px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{background:var(--teal);color:var(--surface);font-weight:700}
+td.n,th.n{text-align:center;white-space:nowrap}
+tr.new td{background:var(--mustard-soft)}
+tr.new td:first-child{box-shadow:inset 4px 0 0 var(--mustard)}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;background:var(--mustard);color:#2A2108;border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:middle}
+details{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:10px}
+summary{cursor:pointer;font-weight:700}
+
+.split{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}
+@media (max-width:640px){.split{grid-template-columns:1fr}}
+.split .card h3{display:flex;justify-content:space-between}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chips span{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:4px 9px;font-size:.92rem}
+
+.shop{columns:2 280px;column-gap:16px}
+.shop .group{break-inside:avoid;margin-bottom:16px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px}
+.shop label{display:flex;gap:10px;align-items:flex-start;padding:6px 0;cursor:pointer}
+.shop input{width:20px;height:20px;margin-top:2px;accent-color:var(--teal);flex:none}
+.shop input:checked + span{text-decoration:line-through;color:var(--muted)}
+.shop em{font-style:normal;color:var(--muted)}
+.btn{font:700 .95rem "Atkinson Hyperlegible",sans-serif;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 14px;cursor:pointer}
+footer{padding:30px 0 40px;color:var(--muted);font-size:.9rem}
+@media print{nav,.days,.btn{display:none}.plate,.card,.shop .group{break-inside:avoid}}
+</style>
+</head>
+<body>
+<nav aria-label="Secciones"><div class="wrap">
+  <a href="#hoy">Día a día</a><a href="#combinar">Cómo combinar</a><a href="#desayunos">Desayunos</a><a href="#platos">Platos</a><a href="#plan">Plan completo</a><a href="#compra">Compra</a>
+</div></nav>
+
+<main class="wrap">
+<header>
+  <h1>Plan de comidas para 2.200 kcal</h1>
+  <p>Diez días de comidas para comprar en el Lidl de Pardubice. Cantidades en crudo, salvo la legumbre de bote. Cuando acabes el día 10, vuelve al día 1.</p>
+  <div class="targets">
+    <span>2.200 kcal<small>al día</small></span>
+    <span>99 g<small>proteína</small></span>
+    <span>50 g<small>grasa</small></span>
+    <span>~340 g<small>carbohidratos</small></span>
+  </div>
+</header>
+
+<section id="hoy">
+  <h2>¿Qué toca hoy?</h2>
+  <div class="days" id="days" role="group" aria-label="Elige el día"></div>
+  <div class="plate" id="plate" aria-live="polite"></div>
+</section>
+
+<section id="combinar">
+  <h2>Cómo combinarlo para llegar a 2.200 kcal</h2>
+  <p>No tienes que combinar nada: cada día del plan ya suma unas 2.200 kcal. Si sigues el plan tal cual, ya estás en tus calorías y tus macros.</p>
+  <p>Si algún día quieres cambiar el orden o elegir platos por tu cuenta, la regla es sencilla:</p>
+  <div class="card" style="margin:10px 0">
+    <h3>Desayuno + almuerzo + merienda ≈ 1.100 kcal</h3>
+    <p style="margin:0">Cualquier combinación de las que tienes cae ahí. Solo evita juntar el bowl de skyr con el tvaroh el mismo día si no metes grasa en otro sitio, porque los dos casi no tienen.</p>
+  </div>
+  <div class="card">
+    <h3>Comida + cena ≈ 1.100 kcal</h3>
+    <p style="margin:0">Combina un plato grande con uno ligero.</p>
+  </div>
+  <div class="split">
+    <div class="card"><h3><span>Grandes</span><span>~590-605 kcal</span></h3>
+      <div class="chips"><span>Fajitas</span><span>409 con pasta</span><span>Garbanzos guisados</span><span>Ensalada de garbanzos</span><span>Burrito bowl</span><span>Bandeja de pollo</span></div></div>
+    <div class="card"><h3><span>Ligeros</span><span>~470-530 kcal</span></h3>
+      <div class="chips"><span>Ensalada de pasta</span><span>Arroz con tomate y huevos</span><span>Revuelto de champiñones</span><span>Salmón con patata</span><span>409 con arroz</span></div></div>
+  </div>
+  <p>Grande + ligero ≈ 1.100. Si juntas dos grandes te pasas unas 100 kcal; si juntas dos ligeros te quedas corto otras 100. Un día suelto no importa, lo que cuenta es la media de la semana.</p>
+  <h3 style="margin-top:18px">Para que los números se cumplan de verdad</h3>
+  <div class="cards">
+    <div class="card"><strong>Pesa los alimentos las primeras semanas,</strong> sobre todo el arroz, la pasta, la avena y el pan. Una báscula de cocina cuesta unas 200-300 Kč y suele haber en el Lidl.</div>
+    <div class="card"><strong>Mide el aceite con una cuchara.</strong> 1 cucharada sopera son unos 10 ml (90 kcal). Echarlo a ojo es el error más habitual: puedes meter 200-300 kcal de más sin darte cuenta.</div>
+    <div class="card"><strong>Pésate y mira la media semanal.</strong> Si en 2-3 semanas tu peso no se mueve, 2.200 es tu mantenimiento. Si quieres subir, el siguiente paso sería pasar a unas 2.500 kcal.</div>
+  </div>
+</section>
+
+<section id="desayunos">
+  <h2>Desayunos</h2>
+  <div class="cards" id="breakfasts"></div>
+  <h3 style="margin-top:22px">Almuerzos y meriendas</h3>
+  <div class="cards" id="snacks"></div>
+</section>
+
+<section id="platos">
+  <h2>Platos</h2>
+  <p>Una ración, cantidades en crudo. Los resaltados son nuevos o han cambiado.</p>
+  <div class="table-scroll"><table id="dishes"></table></div>
+  <details><summary>Cómo hacer los platos nuevos</summary>
+    <p><strong>Burrito bowl (15 min).</strong> Cuece el arroz. Mientras, saltea el pollo en tiras con comino, pimentón y ajo en polvo. Calienta las alubias escurridas y monta el bol con el maíz, el tomate, el pimiento y el skyr como salsa.</p>
+    <p><strong>Bandeja de pollo al horno (40 min).</strong> Patata en gajos y pollo en dados en la bandeja con la verdura congelada, el aceite, sal y especias. Horno a 200 °C entre 35 y 40 minutos, dándoles la vuelta a la mitad.</p>
+    <p><strong>Salmón con patata (35 min).</strong> Hornea primero la patata en rodajas finas 20 minutos a 200 °C. Luego añade el salmón y la verdura y hornea 15 minutos más.</p>
+    <p><strong>Cuscús de la ensalada de garbanzos.</strong> Cúbrelo con agua hirviendo, tápalo 5 minutos y suéltalo con un tenedor.</p>
+  </details>
+</section>
+
+<section id="plan">
+  <h2>Plan completo de 10 días</h2>
+  <div class="table-scroll"><table id="plantable"></table></div>
+  <p style="margin-top:10px">Puedes cambiar un desayuno por otro sin problema: la diferencia es de unas 40 kcal y el día sigue cuadrando.</p>
+</section>
+
+<section id="compra">
+  <h2>Lista de la compra</h2>
+  <p>Toca para tachar. Se guarda en este navegador.</p>
+  <button class="btn" id="reset" type="button">Desmarcar todo</button>
+  <div class="shop" id="shop" style="margin-top:14px"></div>
+</section>
+</main>
+<footer class="wrap">Valores nutricionales aproximados. Ajusta según la evolución de tu peso.</footer>
+
+<script>
+const BF = {
+  porridge:{name:"Porridge", kcal:537,p:21,g:10,hc:91,
+    ing:"70 g avena (ovesné vločky), 300 ml leche semidesnatada, 1 plátano, 10 g miel, canela.",
+    steps:["En cazo: avena y leche a fuego medio 4-5 minutos, removiendo, hasta que espese.","En microondas: en un bol grande, 2-3 minutos, parando a la mitad para remover.","Por encima, el plátano en rodajas, la miel y la canela."],
+    tip:"Mézclalo en un tarro la noche anterior y déjalo en la nevera. Por la mañana lo comes frío o lo calientas 1 minuto."},
+  tostadas:{name:"Tostadas con huevos", kcal:550,p:23,g:12,hc:87,
+    ing:"100 g pan integral (2-3 rebanadas), 2 huevos, tomate, 20 g mermelada, 1 plátano.",
+    steps:["Bate los huevos con sal y cuájalos en sartén antiadherente a fuego bajo, removiendo, sin aceite o con unas gotas.","Ponlos sobre 2 tostadas con tomate en rodajas o rallado.","La tercera tostada, con mermelada. El plátano, aparte."]},
+  skyr:{name:"Bowl de skyr", kcal:513,p:21,g:5,hc:97,
+    ing:"100 g skyr, 60 g avena, 1 plátano, 100 g frutos rojos congelados (lesní ovoce), 25 g miel.",
+    steps:["Descongela los frutos rojos 1 minuto en el microondas o déjalos en la nevera la noche anterior.","Mezcla todo en un bol."],
+    tip:"Si la avena cruda te resulta seca, remójala antes 5 minutos con un chorrito de leche."}
+};
+const SN = {
+  sunka:{name:"Pan + šunka", d:"80 g pan, 60 g šunka, tomate, manzana."},
+  wrap:{name:"Wrap de pavo", d:"Tortilla de trigo, 60 g pavo en lonchas, lechuga, tomate, plátano."},
+  tvaroh:{name:"Tvaroh + pan", d:"100 g tvaroh desnatado, 20 g mermelada, 60 g pan, manzana."},
+  tortitas:{name:"Tortitas + plátano", d:"30 g tortitas de arroz, 1 plátano."},
+  miel:{name:"Pan + miel", d:"50 g pan, 15 g miel, manzana."}
+};
+const D = {
+  revuelto:{name:"Revuelto de champiñones", r:"2 huevos, 150 g champiñones, 5 ml aceite, 120 g pan", m:[521,28,18,58]},
+  epasta:{name:"Ensalada de pasta", r:"80 g pasta, 1 huevo cocido, tomate, pepino, 30 g maíz, 10 ml aceite", m:[473,17,17,63]},
+  fajitas:{name:"Fajitas", r:"2 tortillas de trigo, 100 g pollo, 150 g pimiento y cebolla, 5 ml aceite, 50 g skyr de salsa", m:[592,40,15,71]},
+  a409:{name:"409", r:"100 g carne picada, 200 g pimiento rojo, verde y cebolla, 5 ml aceite, 80 g arroz", m:[559,28,16,74]},
+  p409:{name:"409 con pasta", r:"Lo mismo que el 409, pero con 80 g pasta y 100 g tomate triturado", m:[589,33,17,74]},
+  atomate:{name:"Arroz con tomate y huevos", r:"80 g arroz, 150 g tomate triturado, 2 huevos fritos con 5 ml aceite", m:[517,20,16,71]},
+  gguiso:{name:"Garbanzos guisados", r:"200 g garbanzos cocidos, 150 g patata, 150 g espinacas, 80 g pollo, 10 ml aceite, pimentón", m:[599,38,17,68]},
+  egarb:{name:"Ensalada de garbanzos", r:"200 g garbanzos cocidos, ½ lata de atún, 40 g cuscús, tomate, pepino, pimiento, cebolla, 30 g maíz, 10 ml aceite", m:[605,31,17,79], tag:"Cambiado"},
+  burrito:{name:"Burrito bowl", r:"70 g arroz, 80 g pollo, 80 g alubias rojas cocidas (červené fazole), 30 g maíz, tomate y pimiento, 50 g skyr, 10 ml aceite", m:[601,37,13,80], tag:"Nuevo"},
+  bandeja:{name:"Bandeja de pollo al horno", r:"400 g patata, 120 g pollo, 200 g verdura congelada, 10 ml aceite", m:[590,39,13,77], tag:"Nuevo"},
+  salmon:{name:"Salmón con patata al horno", r:"80 g salmón, 300 g patata, 150 g verdura congelada, 10 ml aceite", m:[526,24,21,58], tag:"Nuevo"}
+};
+const PLAN = [
+  ["porridge","sunka","a409","tortitas","revuelto",[2190,98,49,333]],
+  ["tostadas","wrap","fajitas","tortitas","atomate",[2229,104,50,337]],
+  ["porridge","sunka","gguiso","tortitas","epasta",[2182,97,49,332]],
+  ["skyr","tvaroh","a409","miel","salmon",[2240,96,50,348],"hoy con 15 ml de aceite en vez de 10"],
+  ["porridge","sunka","burrito","tortitas","salmon",[2237,104,49,339]],
+  ["tostadas","wrap","p409","tortitas","atomate",[2226,97,52,340]],
+  ["tostadas","wrap","bandeja","tortitas","epasta",[2183,99,48,336]],
+  ["porridge","sunka","egarb","tortitas","revuelto",[2236,102,50,338]],
+  ["porridge","sunka","fajitas","tortitas","epasta",[2175,100,47,335]],
+  ["tostadas","wrap","gguiso","tortitas","atomate",[2236,102,52,335]]
+];
+const TARGET = {p:99,g:50,hc:340};
+const SHOP = {
+  "Desayuno y básicos":["Avena|ovesné vločky","Leche semidesnatada|polotučné mléko","Pan integral|celozrnný chléb","Miel|med","Mermelada|džem","Canela|skořice","Skyr|","Tvaroh desnatado|odtučněný tvaroh","Frutos rojos congelados|lesní ovoce"],
+  "Fruta":["Plátanos|banány","Manzanas|jablka"],
+  "Proteína":["Huevos|vejce","Pechuga de pollo|kuřecí prsa","Carne picada de ternera o pavo|hovězí / krůtí mleté","Salmón|losos","Atún al natural|tuňák ve vlastní šťávě","Jamón cocido|šunka","Pavo en lonchas|krůtí šunka"],
+  "Carbohidratos":["Arroz|rýže","Pasta|těstoviny","Cuscús|kuskus","Patatas|brambory","Tortillas de trigo|pšeničné tortilly","Tortitas de arroz|rýžové chlebíčky"],
+  "Legumbres y conservas":["Garbanzos cocidos|cizrna","Alubias rojas|červené fazole","Maíz|kukuřice","Tomate triturado|drcená rajčata"],
+  "Verdura":["Champiñones|žampiony","Pimiento rojo y verde|paprika","Cebolla|cibule","Tomate|rajčata","Pepino|okurka","Lechuga|salát","Espinacas|špenát","Verdura congelada para horno o salteado|zeleninová směs"],
+  "Despensa":["Aceite de oliva|olivový olej","Sal|","Pimienta|","Pimentón|mletá paprika","Comino|kmín","Ajo en polvo|česnek sušený","Especias para fajitas|"]
+};
+const fmt = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g,".");
+const esc = s => s.replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));
+
+// Day picker
+const daysEl = document.getElementById("days"), plate = document.getElementById("plate");
+function showDay(i){
+  const [b,a,c,m,x,t,note] = PLAN[i];
+  [...daysEl.children].forEach((btn,k)=>btn.setAttribute("aria-pressed",k===i));
+  const bar=(label,val,max,color,unit)=>`<div class="bar"><span>${label}</span><div class="track"><div class="fill" style="width:${Math.min(100,val/max*100)}%;background:${color}"></div></div><span class="num">${val} / ${max} ${unit}</span></div>`;
+  plate.innerHTML = `
+    <div class="plate-head"><h3 style="font-size:1.5rem">Día ${i+1}</h3><div class="kcal">${fmt(t[0])} <small>kcal</small></div></div>
+    <ul class="meals">
+      <li><span class="when">Desayuno</span><span class="what">${BF[b].name}<small>${esc(BF[b].ing)}</small></span></li>
+      <li><span class="when">Almuerzo</span><span class="what">${SN[a].name}<small>${SN[a].d}</small></span></li>
+      <li><span class="when">Comida</span><span class="what">${D[c].name}<small>${esc(D[c].r)}</small></span></li>
+      <li><span class="when">Merienda</span><span class="what">${SN[m].name}<small>${SN[m].d}</small></span></li>
+      <li><span class="when">Cena</span><span class="what">${D[x].name}<small>${esc(D[x].r)}${note?` (${note})`:""}</small></span></li>
+    </ul>
+    <div class="bars">
+      ${bar("Proteína",t[1],TARGET.p,"var(--p)","g")}
+      ${bar("Grasa",t[2],TARGET.g,"var(--g)","g")}
+      ${bar("Carbohidratos",t[3],TARGET.hc,"var(--hc)","g")}
+    </div>`;
+  try{localStorage.setItem("plan-dia",i)}catch(e){}
+}
+PLAN.forEach((_,i)=>{const btn=document.createElement("button");btn.type="button";btn.textContent=i+1;btn.setAttribute("aria-label","Día "+(i+1));btn.onclick=()=>showDay(i);daysEl.appendChild(btn);});
+let start=0; try{const s=parseInt(localStorage.getItem("plan-dia"));if(s>=0&&s<10)start=s}catch(e){}
+showDay(start);
+
+// Breakfasts + snacks
+document.getElementById("breakfasts").innerHTML = Object.values(BF).map(b=>`
+  <div class="card"><h3>${b.name}</h3><div class="macro">${b.kcal} kcal, ${b.p} g P, ${b.g} g G, ${b.hc} g HC</div>
+  <p style="margin:.2rem 0"><strong>Ingredientes:</strong> ${esc(b.ing)}</p>
+  <ul>${b.steps.map(s=>`<li>${s}</li>`).join("")}</ul>${b.tip?`<div class="tip"><strong>Truco:</strong> ${b.tip}</div>`:""}</div>`).join("");
+document.getElementById("snacks").innerHTML = Object.values(SN).map(s=>`<div class="card"><h3>${s.name}</h3><p style="margin:0">${s.d}</p></div>`).join("");
+
+// Dishes table
+document.getElementById("dishes").innerHTML = `<thead><tr><th>Plato</th><th>Ración</th><th class="n">kcal</th><th class="n">P</th><th class="n">G</th><th class="n">HC</th></tr></thead><tbody>`+
+  Object.values(D).map(d=>`<tr class="${d.tag?"new":""}"><td><strong>${d.name}</strong>${d.tag?`<span class="tag">${d.tag}</span>`:""}</td><td>${esc(d.r)}</td>${d.m.map(v=>`<td class="n">${v}</td>`).join("")}</tr>`).join("")+`</tbody>`;
+
+// Full plan table
+document.getElementById("plantable").innerHTML = `<thead><tr><th class="n">Día</th><th>Desayuno</th><th>Almuerzo</th><th>Comida</th><th>Merienda</th><th>Cena</th><th class="n">kcal / P / G / HC</th></tr></thead><tbody>`+
+  PLAN.map((r,i)=>`<tr><td class="n"><strong>${i+1}</strong></td><td>${BF[r[0]].name}</td><td>${SN[r[1]].name}</td><td>${D[r[2]].name}</td><td>${SN[r[3]].name}</td><td>${D[r[4]].name}${r[6]?" (15 ml aceite)":""}</td><td class="n">${fmt(r[5][0])} / ${r[5][1]} / ${r[5][2]} / ${r[5][3]}</td></tr>`).join("")+`</tbody>`;
+
+// Shopping list
+let checked={}; try{checked=JSON.parse(localStorage.getItem("plan-compra")||"{}")}catch(e){checked={}}
+const shop=document.getElementById("shop");
+shop.innerHTML = Object.entries(SHOP).map(([cat,items])=>`<div class="group"><h3>${cat}</h3>`+
+  items.map(it=>{const [es,cz]=it.split("|");const id=es;return `<label><input type="checkbox" data-id="${id}" ${checked[id]?"checked":""}><span>${es}${cz?` <em>(${cz})</em>`:""}</span></label>`}).join("")+`</div>`).join("");
+shop.addEventListener("change",e=>{const id=e.target.dataset.id;if(!id)return;checked[id]=e.target.checked;try{localStorage.setItem("plan-compra",JSON.stringify(checked))}catch(err){}});
+document.getElementById("reset").onclick=()=>{checked={};shop.querySelectorAll("input").forEach(i=>i.checked=false);try{localStorage.removeItem("plan-compra")}catch(e){}};
+</script>
+</body>
+</html>
